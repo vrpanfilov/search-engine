@@ -9,5 +9,4 @@ import javax.transaction.Transactional;
 public interface LemmaRepository extends JpaRepository<Lemma, Integer> {
     @Transactional
     void deleteAllInBatchBySite(Site site);
-
 }

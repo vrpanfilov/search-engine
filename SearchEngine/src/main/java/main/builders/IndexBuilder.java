@@ -108,13 +108,13 @@ public class IndexBuilder {
     }
 
     private void saveLemmasAndIndexes() {
-        System.out.println("\t\t\t\t\t\tСайт " + site.getName() + ": cохраняем леммы");
+        System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт " + site.getName() + ": cохраняем леммы");
         var lemmaCollection = lemmas.values();
         synchronized (Lemma.class) {
             Repos.lemmaRepo.saveAllAndFlush(lemmaCollection);
         }
 
-        System.out.println("\t\t\t\t\t\tСайт " + site.getName() + ": cохраняем индексы");
+        System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт " + site.getName() + ": cохраняем индексы");
         int ind = 1;
         for (Page page : site.getPages()) {
             List<Index> pageIndexes = indexes.values().stream()
@@ -126,10 +126,10 @@ public class IndexBuilder {
             }
             ind++;
             if (ind % 100 == 0) {
-                System.out.println("\t\t\t\t\t\tСайт " + site.getName() + ": сохранено " + ind + " страниц");
+                System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт " + site.getName() + ": сохранено " + ind + " страниц");
             }
         }
-        System.out.println("\t\t\t\t\t\tСайт " + site.getName() + ": " +
+        System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт " + site.getName() + ": " +
                 " все " + site.getPages().size() + " страницы сохранены");
     }
 }

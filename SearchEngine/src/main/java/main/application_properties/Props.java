@@ -20,6 +20,17 @@ public class Props {
 
     private static Props inst;
 
+    public List<SiteUrlName> getSites() {
+        if (inst == null) {
+            synchronized (Props.class) {
+                if (inst == null) {
+                    init(this);
+                }
+            }
+        }
+        return sites;
+    }
+
     public static Props getInst() {
         return inst;
     }

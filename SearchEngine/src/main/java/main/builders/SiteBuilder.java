@@ -1,21 +1,24 @@
 package main.builders;
 
+import main.apiResponses.StatisticsResponse;
 import main.application_properties.Props;
-import main.model.Page;
 import main.model.Site;
 import main.repository.Repos;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.*;
 
 public class SiteBuilder implements Runnable {
+    public static final boolean IS_INDEXING = true;
     private static ExecutorService executor;
     final static int forSitesThreadNumber =
             Props.getInst().getForSitesThreadNumber();
+
+    public static ConcurrentHashMap<String, Site> getIndexingSites() {
+        return indexingSites;
+    }
+
     private static ConcurrentHashMap<String, Site>
             indexingSites = new ConcurrentHashMap<>();
 
@@ -23,6 +26,7 @@ public class SiteBuilder implements Runnable {
     private final Set<String> viewedPages;
     private final ConcurrentLinkedQueue<String> lastNodes;
     private CopyOnWriteArraySet<String> forbiddenNodes;
+
 
     public ConcurrentLinkedQueue<String> getLastNodes() {
         return lastNodes;
@@ -108,11 +112,34 @@ public class SiteBuilder implements Runnable {
 
         Site processingSite = indexingSites.putIfAbsent(siteUrl, siteBuilder.site);
         if (processingSite != null) {
-            return false;
+            return IS_INDEXING;
         }
 
         executor.execute(siteBuilder);
 
-        return true;
+        return !IS_INDEXING;
+    }
+
+    public static boolean buildAllSites() {
+        List<Props.SiteUrlName> siteUrlNames = Props.getInst().getSites();
+        for (var siteUrlName : siteUrlNames) {
+//            boolean isIndexing = SiteBuilder.buildSite(siteUrlName.getUrl());
+        }
+        return IS_INDEXING;
+    }
+
+    public static String indexPage(String url) {
+        return "Данная страница находится за пределами сайтов, " +
+                "указанных в конфигурационном файле";
+    }
+
+    public static boolean stopIndexing() {
+        return !IS_INDEXING;
+    }
+
+    public static StatisticsResponse getStatistics() {
+        StatisticsResponse response = new StatisticsResponse();
+
+        return response;
     }
 }

@@ -9,10 +9,13 @@ import java.util.List;
 
 @Data
 public class Statistics {
-    private TotalStatistics total = new TotalStatistics();
-    private List<DetailedStatistics> detailed = new ArrayList<>();
+    private TotalStatistics total;
+    private List<DetailedStatistics> detailed;
 
     public Statistics() {
+        total = new TotalStatistics();
+        detailed = new ArrayList<>();
+
         List<Site> sites = Repos.siteRepo.findAll().stream()
                 .filter(site -> site.getType().equals(Site.INDEXED)).toList();
         for (Site site : sites) {

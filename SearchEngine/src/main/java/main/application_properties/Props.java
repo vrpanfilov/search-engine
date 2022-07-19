@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 @Component
@@ -18,35 +20,33 @@ public class Props {
     private Boolean isFirstStagePresent;
     private List<SiteUrlName> sites;
 
+    private static Boolean inited = false;
+
     private static Props inst;
 
-    public List<SiteUrlName> getSites() {
-        if (inst == null) {
-            synchronized (Props.class) {
-                if (inst == null) {
-                    init(this);
-                }
-            }
-        }
-        return sites;
+    public Props() {
+        inst = this;
     }
 
     public static Props getInst() {
+        synchronized (inited) {
+            if (!inst.inited) {
+                init();
+                inited = true;
+            }
+        }
         return inst;
     }
 
-    public static void init(Props props) {
-        inst = props;
+    public static void init() {
         for (SiteUrlName sun : inst.sites) {
-            int fromIndex = 0;
-            int pos = sun.url.indexOf("//");
-            if (pos > 0) {
-                fromIndex = pos + 2;
+            URL url = null;
+            try {
+                url = new URL(sun.getUrl());
+            } catch (MalformedURLException e) {
+                continue;
             }
-            pos = sun.url.indexOf("/", fromIndex);
-            if (pos > 0) {
-                sun.url = sun.url.substring(0, pos);
-            }
+            sun.setUrl(url.getProtocol() + "://" + url.getHost());
         }
     }
 

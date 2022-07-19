@@ -35,20 +35,20 @@ public class IndexingController {
         if (isIndexing) {
             return new Response();
         }
-        return new ErrorResponse("Индексация не запущена");
+        return new ErrorResponse("Индексация не была запущена");
     }
 
     @PostMapping("/api/indexPage")
     public Response indexPage(@RequestParam String url) {
         String result = SiteBuilder.indexPage(url);
-        if (result.equals("OK")) {
+        if (result.equals(SiteBuilder.OK)) {
             return new Response();
         }
         return new ErrorResponse(result);
     }
 
     @GetMapping("/api/statistics")
-    public StatisticsResponse statistics() {
+    public Response statistics() {
         return SiteBuilder.getStatistics();
     }
 

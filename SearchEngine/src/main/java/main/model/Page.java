@@ -5,6 +5,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import javax.persistence.Index;
 import java.io.Serializable;
 
 @Entity
@@ -16,7 +17,7 @@ public class Page implements Serializable {
     private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "site_id", nullable = false, foreignKey=@ForeignKey(name = "FK_page_site"))
+    @JoinColumn(name = "site_id", nullable = false, foreignKey = @ForeignKey(name = "FK_page_site"))
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Site site;
     @Column(columnDefinition = "text", nullable = false)

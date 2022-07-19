@@ -2,9 +2,12 @@ package main.builders;
 
 import main.apiResponses.StatisticsResponse;
 import main.application_properties.Props;
+import main.model.Page;
 import main.model.Site;
 import main.repository.Repos;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.*;
@@ -98,7 +101,6 @@ public class SiteBuilder implements Runnable {
         }
     }
 
-
     public static boolean buildSite(String siteUrl) {
         if (executor == null) {
             synchronized (Executors.class) {
@@ -123,14 +125,40 @@ public class SiteBuilder implements Runnable {
     public static boolean buildAllSites() {
         List<Props.SiteUrlName> siteUrlNames = Props.getInst().getSites();
         for (var siteUrlName : siteUrlNames) {
-//            boolean isIndexing = SiteBuilder.buildSite(siteUrlName.getUrl());
+            boolean isIndexing = SiteBuilder.buildSite(siteUrlName.getUrl());
         }
         return IS_INDEXING;
     }
 
-    public static String indexPage(String url) {
-        return "Данная страница находится за пределами сайтов, " +
-                "указанных в конфигурационном файле";
+    public static final String OK = "OK";
+    public static final String NOT_FOUND = "\"Данная страница находится за пределами сайтов, " +
+            "указанных в конфигурационном файле";
+    public static final String RUNNING = "Индексация уже запущена";
+
+    public static String indexPage(String stringUrl) {
+        if (!indexingSites.isEmpty()) {
+            return RUNNING;
+        }
+
+        URL url = null;
+        try {
+            url = new URL(stringUrl);
+        } catch (MalformedURLException e) {
+            return NOT_FOUND;
+        }
+        String home = url.getProtocol() + "://" + url.getHost();
+        String path = url.getFile();
+
+        Site site = Repos.siteRepo.findByUrl(home).orElse(null);
+        if (site == null) {
+            return NOT_FOUND;
+        }
+
+        Page page = Repos.pageRepo.findBySiteAndPath(site, path).orElse(null);
+        if (page == null) {
+            return NOT_FOUND;
+        }
+        return OK;
     }
 
     public static boolean stopIndexing() {
@@ -138,8 +166,6 @@ public class SiteBuilder implements Runnable {
     }
 
     public static StatisticsResponse getStatistics() {
-        StatisticsResponse response = new StatisticsResponse();
-
-        return response;
+        return new StatisticsResponse();
     }
 }

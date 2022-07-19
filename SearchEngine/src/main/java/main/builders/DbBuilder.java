@@ -18,7 +18,7 @@ public class DbBuilder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Props.init(props);
+        Props.init();
 
         List<Props.SiteUrlName> siteUrlNames = props.getSites();
         for (var siteUrlName : siteUrlNames) {

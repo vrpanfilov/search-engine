@@ -62,7 +62,7 @@ public class IndexBuilder {
         }
     }
 
-    private void fillLemmasAndIndexes() {
+    public void fillLemmasAndIndexes() {
         Document doc = Jsoup.parse(page.getContent());
         for (Field field : fields) {
             Element element = doc.getElementsByTag(field.getSelector()).first();
@@ -88,7 +88,6 @@ public class IndexBuilder {
             lemmas.put(lemmaName, lemma);
 
             Index index = new Index(page, lemma, weight);
-            index.setRank(weight);
             indexes.put(index.hashCode(), index);
 
             lemmasInPage.add(lemmaName);
@@ -108,7 +107,7 @@ public class IndexBuilder {
         }
     }
 
-    private void saveLemmasAndIndexes() {
+    public void saveLemmasAndIndexes() {
         System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт " + site.getName() + ": cохраняем леммы");
         var lemmaCollection = lemmas.values();
         synchronized (Lemma.class) {

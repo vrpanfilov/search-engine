@@ -37,4 +37,9 @@ public class Lemma {
     public int hashCode() {
         return lemma.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "id: " + id + "; lemma: " + lemma + "; frequency: " + frequency + "; site: " + site.getName();
+    }
 }

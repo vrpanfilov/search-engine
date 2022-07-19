@@ -41,4 +41,9 @@ public class Index {
         this.lemma = lemma;
         this.rank = rank;
     }
+
+    @Override
+    public String toString() {
+        return "id: " + id + "; page: " + page.getPath() + "; lemma: " + lemma.getLemma();
+    }
 }

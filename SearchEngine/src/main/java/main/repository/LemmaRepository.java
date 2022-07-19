@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 public interface LemmaRepository extends JpaRepository<Lemma, Integer> {
     @Transactional
@@ -21,4 +22,6 @@ public interface LemmaRepository extends JpaRepository<Lemma, Integer> {
             "where l.site_id = ?1",
             nativeQuery = true)
     Integer findLemmaCountInSite(Integer siteId);
+
+    List<Lemma> findAllBySite(Site site);
 }

@@ -17,19 +17,17 @@ public class SiteBuilder implements Runnable {
     private static ExecutorService executor;
     final static int forSitesThreadNumber =
             Props.getInst().getForSitesThreadNumber();
-
-    public static ConcurrentHashMap<String, Site> getIndexingSites() {
-        return indexingSites;
-    }
-
     private static ConcurrentHashMap<String, Site>
             indexingSites = new ConcurrentHashMap<>();
-
     private Site site;
     private final Set<String> viewedPages;
     private final ConcurrentLinkedQueue<String> lastNodes;
     private CopyOnWriteArraySet<String> forbiddenNodes;
 
+
+    public static ConcurrentHashMap<String, Site> getIndexingSites() {
+        return indexingSites;
+    }
 
     public ConcurrentLinkedQueue<String> getLastNodes() {
         return lastNodes;
@@ -122,43 +120,15 @@ public class SiteBuilder implements Runnable {
         return !IS_INDEXING;
     }
 
+    private static void buildPage(Page page) {
+    }
+
     public static boolean buildAllSites() {
         List<Props.SiteUrlName> siteUrlNames = Props.getInst().getSites();
         for (var siteUrlName : siteUrlNames) {
-            boolean isIndexing = SiteBuilder.buildSite(siteUrlName.getUrl());
+            boolean isIndexing = buildSite(siteUrlName.getUrl());
         }
         return IS_INDEXING;
-    }
-
-    public static final String OK = "OK";
-    public static final String NOT_FOUND = "\"Данная страница находится за пределами сайтов, " +
-            "указанных в конфигурационном файле";
-    public static final String RUNNING = "Индексация уже запущена";
-
-    public static String indexPage(String stringUrl) {
-        if (!indexingSites.isEmpty()) {
-            return RUNNING;
-        }
-
-        URL url = null;
-        try {
-            url = new URL(stringUrl);
-        } catch (MalformedURLException e) {
-            return NOT_FOUND;
-        }
-        String home = url.getProtocol() + "://" + url.getHost();
-        String path = url.getFile();
-
-        Site site = Repos.siteRepo.findByUrl(home).orElse(null);
-        if (site == null) {
-            return NOT_FOUND;
-        }
-
-        Page page = Repos.pageRepo.findBySiteAndPath(site, path).orElse(null);
-        if (page == null) {
-            return NOT_FOUND;
-        }
-        return OK;
     }
 
     public static boolean stopIndexing() {

@@ -35,14 +35,21 @@ public class Node {
     private Set<String> viewedNodes;
     private ConcurrentLinkedQueue<String> lastNodes;
     private CopyOnWriteArraySet<String> forbiddenNodes;
+    private int addedPageId;
 
 
     public Node(Site site, String pagePath) {
         this.site = site;
         this.pagePath = pagePath;
-        viewedNodes = site.getSiteBuilder().getViewedPages();
-        lastNodes = site.getSiteBuilder().getLastNodes();
-        forbiddenNodes = site.getSiteBuilder().getForbiddenNodes();
+        if (site.getSiteBuilder() != null) {
+            viewedNodes = site.getSiteBuilder().getViewedPages();
+            lastNodes = site.getSiteBuilder().getLastNodes();
+            forbiddenNodes = site.getSiteBuilder().getForbiddenNodes();
+        } else {
+            viewedNodes = new HashSet<>();
+            lastNodes = new ConcurrentLinkedQueue<>();
+            forbiddenNodes = new CopyOnWriteArraySet<>();
+        }
     }
 
     private String getUrl() {
@@ -105,6 +112,8 @@ public class Node {
         synchronized (Page.class) {
             Repos.pageRepo.saveAndFlush(page);
         }
+        addedPageId = page.getId();
+
         synchronized (Site.class) {
             site.getPages().add(page);
         }

@@ -6,6 +6,7 @@ import main.apiResponses.Response;
 import main.apiResponses.StatisticsResponse;
 import main.application_properties.Props;
 import main.builders.IndexBuilder;
+import main.builders.PageBuilder;
 import main.builders.SiteBuilder;
 import main.repository.LemmaRepository;
 import main.repository.Repos;
@@ -40,8 +41,8 @@ public class IndexingController {
 
     @PostMapping("/api/indexPage")
     public Response indexPage(@RequestParam String url) {
-        String result = SiteBuilder.indexPage(url);
-        if (result.equals(SiteBuilder.OK)) {
+        String result = PageBuilder.indexPage(url);
+        if (result.equals(PageBuilder.OK)) {
             return new Response();
         }
         return new ErrorResponse(result);

@@ -26,9 +26,7 @@ public class IndexBuilder {
     }
 
     public static void build(Site site) {
-        synchronized (Field.class) {
-            fields = Repos.fieldRepo.findAll();
-        }
+        fields = Repos.fieldRepo.findAll();
         synchronized (Lemma.class) {
             Repos.lemmaRepo.deleteAllInBatchBySite(site);
         }
@@ -49,9 +47,7 @@ public class IndexBuilder {
                 return;
             }
             Page pag;
-            synchronized (Page.class) {
-                pag = Repos.pageRepo.findById(page.getId()).get();
-            }
+            pag = Repos.pageRepo.findById(page.getId()).get();
             IndexBuilder indexBuilder = new IndexBuilder(
                     site, pag, lemmas, indexes);
             indexBuilder.fillLemmasAndIndexes();
@@ -130,10 +126,10 @@ public class IndexBuilder {
             }
             ind++;
             if (ind % 100 == 0) {
-                System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт " + site.getName() + ": сохранено " + ind + " страниц");
+                System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт " + site.getName() + ": сохранено страниц - " + ind);
             }
         }
         System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт " + site.getName() + ": " +
-                " все " + site.getPages().size() + " страницы сохранены");
+                " всего сохранено страниц - " + site.getPages().size());
     }
 }

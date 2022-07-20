@@ -29,8 +29,8 @@ sites:
     name: Вышний Волочёк
   - url: http://radiomv.ru
     name: Милицейкая волна
-#  - url: https://ipfran.ru
-#    name: Институт прикладной физики Российской академии наук
+  - url: https://ipfran.ru
+    name: Институт прикладной физики Российской академии наук
   - url: https://dimonvideo.ru
     name: DIMONVIDEO
   - url: https://nikoartgallery.com

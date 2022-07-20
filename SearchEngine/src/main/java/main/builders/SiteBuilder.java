@@ -53,11 +53,9 @@ public class SiteBuilder implements Runnable {
         forbiddenNodes = new CopyOnWriteArraySet<>();
         viewedPages = new HashSet<>();
 
-        synchronized (Site.class) {
-            site = Repos.siteRepo.findAllByUrl(siteUrl).stream()
-                    .filter(site -> site.getType().equals(Site.INDEXING))
-                    .findFirst().orElse(null);
-        }
+        site = Repos.siteRepo.findAllByUrl(siteUrl).stream()
+                .filter(site -> site.getType().equals(Site.INDEXING))
+                .findFirst().orElse(null);
 
         Boolean isFirstStagePresent = Props.getInst().getIsFirstStagePresent();
         if (isFirstStagePresent == null || isFirstStagePresent) {

@@ -46,18 +46,14 @@ public class PageBuilder implements Runnable {
     @Override
     public void run() {
         List<Lemma> lemmaList;
-        synchronized (Lemma.class) {
-            lemmaList = Repos.lemmaRepo.findAllBySite(site);
-        }
+        lemmaList = Repos.lemmaRepo.findAllBySite(site);
         Map<String, Lemma> lemmas = new HashMap<>();
         for (Lemma lemma : lemmaList) {
             lemmas.put(lemma.getLemma(), lemma);
         }
 
         List<Index> indexList;
-        synchronized (Index.class) {
-            indexList = Repos.indexRepo.findAllBySiteId(site.getId());
-        }
+        indexList = Repos.indexRepo.findAllBySiteId(site.getId());
         Map<Integer, Index> indexes = new HashMap<>();
         for (Index index : indexList) {
             indexes.put(index.hashCode(), index);
@@ -126,9 +122,7 @@ public class PageBuilder implements Runnable {
         String path = url.getFile();
 
         Site site;
-        synchronized (Site.class) {
-            site = Repos.siteRepo.findByUrl(home).orElse(null);
-        }
+        site = Repos.siteRepo.findByUrl(home).orElse(null);
         if (site == null) {
             return NOT_FOUND;
         }

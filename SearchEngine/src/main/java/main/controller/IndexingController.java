@@ -1,10 +1,8 @@
 package main.controller;
 
-import lombok.Data;
 import main.apiResponses.ErrorResponse;
 import main.apiResponses.Response;
 import main.application_properties.Props;
-import main.builders.IndexBuilder;
 import main.builders.PageBuilder;
 import main.builders.SiteBuilder;
 import org.springframework.beans.factory.annotation.Autowired;

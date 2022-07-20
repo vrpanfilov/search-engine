@@ -1,7 +1,6 @@
 package main.builders;
 
 import main.Lemmatizator.Lemmatizator;
-//import main.apiResponses.StatisticsResponse;
 import main.model.*;
 import main.repository.Repos;
 import org.jsoup.Jsoup;

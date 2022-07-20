@@ -6,8 +6,6 @@ import main.model.Page;
 import main.model.Site;
 import main.repository.Repos;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.*;

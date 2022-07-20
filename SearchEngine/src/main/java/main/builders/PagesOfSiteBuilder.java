@@ -14,6 +14,7 @@ public class PagesOfSiteBuilder extends RecursiveAction {
     private final Node node;
     final static int forPagesThreadNumber = Props.getInst().getForPagesThreadNumber();
 
+
     public PagesOfSiteBuilder(Node node) {
         this.node = node;
     }
@@ -29,11 +30,16 @@ public class PagesOfSiteBuilder extends RecursiveAction {
 
         Document doc = node.processAndRetunPageDoc();
 
+        if  (SiteBuilder.isStopping()) {
+            return;
+        }
+
         List<Node> children = node.getChildren(doc);
 
         if (children == null || children.size() == 0) {
             return;
         }
+
         for (Node child : children) {
             PagesOfSiteBuilder builder = new PagesOfSiteBuilder(child);
             builder.fork();

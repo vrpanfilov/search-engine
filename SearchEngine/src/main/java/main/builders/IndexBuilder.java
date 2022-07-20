@@ -45,6 +45,9 @@ public class IndexBuilder {
                 .filter(p1 -> p1.getCode() == Node.OK)
                 .sorted((o1, o2) -> o1.getId() - o2.getId()).toList();
         for (Page page : pages) {
+            if (SiteBuilder.isStopping()) {
+                return;
+            }
             Page pag;
             synchronized (Page.class) {
                 pag = Repos.pageRepo.findById(page.getId()).get();
@@ -104,6 +107,9 @@ public class IndexBuilder {
 
     public void saveLemmasAndIndexes() {
         System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт " + site.getName() + ": cохраняем леммы");
+        if (SiteBuilder.isStopping()) {
+            return;
+        }
         var lemmaCollection = lemmas.values();
         synchronized (Lemma.class) {
             Repos.lemmaRepo.saveAllAndFlush(lemmaCollection);
@@ -112,6 +118,9 @@ public class IndexBuilder {
         System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт " + site.getName() + ": cохраняем индексы");
         int ind = 1;
         for (Page page : site.getPages()) {
+            if (SiteBuilder.isStopping()) {
+                return;
+            }
             List<Index> pageIndexes = indexes.values().stream()
                     .filter(index -> index.getPage().getId() == page.getId()
                             && index.getPage().getCode() == Node.OK)

@@ -2,7 +2,6 @@ package main.builders;
 
 import main.apiResponses.StatisticsResponse;
 import main.application_properties.Props;
-import main.model.Page;
 import main.model.Site;
 import main.repository.Repos;
 
@@ -39,12 +38,21 @@ public class SiteBuilder implements Runnable {
         return viewedPages;
     }
 
+    private static boolean stopping = false;
+
+    public static boolean isStopping() {
+        return stopping;
+    }
+
+    public static void setStopping(boolean stopping) {
+        SiteBuilder.stopping = stopping;
+    }
+
     public SiteBuilder(String siteUrl) {
         lastNodes = new ConcurrentLinkedQueue<>();
         forbiddenNodes = new CopyOnWriteArraySet<>();
         viewedPages = new HashSet<>();
 
-//        site = Repos.siteRepo.findByUrl(siteUrl).orElse(null);
         synchronized (Site.class) {
             site = Repos.siteRepo.findAllByUrl(siteUrl).stream()
                     .filter(site -> site.getType().equals(Site.INDEXING))
@@ -72,28 +80,55 @@ public class SiteBuilder implements Runnable {
     @Override
     public void run() {
         Long begin = System.currentTimeMillis();
+        while (true) {
+            PagesOfSiteBuilder.build(site);
+            if (isStopping()) {
+                break;
+            }
 
-        PagesOfSiteBuilder.build(site);
+            IndexBuilder.build(site);
+            if (isStopping()) {
+                break;
+            }
 
-        IndexBuilder.build(site);
+            System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт " + site.getName() + " построен за " +
+                    (System.currentTimeMillis() - begin) / 1000 + " сек");
 
-        indexingSites.remove(site.getUrl());
+            Site prevSite = Repos.siteRepo.findByNameAndType(site.getName(), Site.INDEXED)
+                    .orElse(null);
+            if (prevSite != null) {
+                prevSite.setType(Site.REMOVING);
+                synchronized (Site.class) {
+                    Repos.siteRepo.saveAndFlush(prevSite);
+                }
+            }
 
-        System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт " + site.getName() + " построен за " +
-                (System.currentTimeMillis() - begin) / 1000 + " сек");
+            site.setType(Site.INDEXED);
+            synchronized (Site.class) {
+                Repos.siteRepo.saveAndFlush(site);
+            }
 
-        Site prevSite = Repos.siteRepo.findByNameAndType(site.getName(), Site.INDEXED)
-                .orElse(null);
-        if (prevSite != null) {
-            prevSite.setType(Site.REMOVING);
-            Repos.siteRepo.saveAndFlush(prevSite);
+            if (prevSite != null) {
+                synchronized (Site.class) {
+                    Repos.siteRepo.delete(prevSite);
+                }
+            }
+            break;
         }
 
-        site.setType(Site.INDEXED);
-        Repos.siteRepo.saveAndFlush(site);
+        if (isStopping()) {
+            Site sit = Repos.siteRepo.findByNameAndType(site.getName(), Site.INDEXING)
+                    .orElse(null);
+            if (sit != null) {
+                synchronized (Site.class) {
+                    Repos.siteRepo.delete(sit);
+                }
+            }
+        }
 
-        if (prevSite != null) {
-            Repos.siteRepo.delete(prevSite);
+        indexingSites.remove(site.getUrl());
+        if (indexingSites.isEmpty()) {
+            stopping = false;
         }
     }
 
@@ -114,9 +149,6 @@ public class SiteBuilder implements Runnable {
         }
 
         executor.execute(siteBuilder);
-    }
-
-    private static void buildPage(Page page) {
     }
 
     public static boolean buildAllSites() {
@@ -140,6 +172,8 @@ public class SiteBuilder implements Runnable {
         if (indexingSites.isEmpty()) {
             return !IS_INDEXING;
         }
+
+        setStopping(true);
 
         return IS_INDEXING;
     }

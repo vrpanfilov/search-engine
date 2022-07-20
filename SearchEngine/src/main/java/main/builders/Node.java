@@ -57,6 +57,9 @@ public class Node {
     }
 
     public Document processAndRetunPageDoc() {
+        if (SiteBuilder.isStopping()) {
+            return null;
+        }
         try {
             Thread.sleep(500);
         } catch (Exception e) {

@@ -99,7 +99,7 @@ public class SiteBuilder implements Runnable {
         }
     }
 
-    public static boolean buildSite(String siteUrl) {
+    public static void buildSite(String siteUrl) {
         if (executor == null) {
             synchronized (Executors.class) {
                 if (executor == null) {
@@ -112,27 +112,38 @@ public class SiteBuilder implements Runnable {
 
         Site processingSite = indexingSites.putIfAbsent(siteUrl, siteBuilder.site);
         if (processingSite != null) {
-            return IS_INDEXING;
+            return;
         }
 
         executor.execute(siteBuilder);
-
-        return !IS_INDEXING;
     }
 
     private static void buildPage(Page page) {
     }
 
     public static boolean buildAllSites() {
+        if (!indexingSites.isEmpty()) {
+            return IS_INDEXING;
+        }
+        synchronized (PageBuilder.indexingPages) {
+            if (!PageBuilder.indexingPages.isEmpty()) {
+                return IS_INDEXING;
+            }
+        }
+
         List<Props.SiteUrlName> siteUrlNames = Props.getInst().getSites();
         for (var siteUrlName : siteUrlNames) {
-            boolean isIndexing = buildSite(siteUrlName.getUrl());
+            buildSite(siteUrlName.getUrl());
         }
-        return IS_INDEXING;
+        return !IS_INDEXING;
     }
 
     public static boolean stopIndexing() {
-        return !IS_INDEXING;
+        if (indexingSites.isEmpty()) {
+            return !IS_INDEXING;
+        }
+
+        return IS_INDEXING;
     }
 
     public static StatisticsResponse getStatistics() {

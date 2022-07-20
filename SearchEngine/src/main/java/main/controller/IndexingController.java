@@ -3,13 +3,10 @@ package main.controller;
 import lombok.Data;
 import main.apiResponses.ErrorResponse;
 import main.apiResponses.Response;
-import main.apiResponses.StatisticsResponse;
 import main.application_properties.Props;
 import main.builders.IndexBuilder;
 import main.builders.PageBuilder;
 import main.builders.SiteBuilder;
-import main.repository.LemmaRepository;
-import main.repository.Repos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +19,7 @@ public class IndexingController {
     public Props props;
 
     @GetMapping("/api/startIndexing")
-    public Response startEntity() {
+    public Response startIndexing() {
         boolean isIndexing = SiteBuilder.buildAllSites();
         if (isIndexing) {
             return new ErrorResponse("Индексация уже запущена");

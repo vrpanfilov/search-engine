@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 //TODO:
-// Разобраться с результатом запуска "/api/startIndexing"
 
 @SpringBootApplication
 public class SearchEngineApplication {

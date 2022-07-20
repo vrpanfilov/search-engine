@@ -105,6 +105,9 @@ public class PageBuilder implements Runnable {
     }
 
     public static String indexPage(String stringUrl) {
+        if (!SiteBuilder.getIndexingSites().isEmpty()) {
+            return RUNNING;
+        }
         if (executor == null) {
             synchronized (Executors.class) {
                 if (executor == null) {
@@ -122,7 +125,10 @@ public class PageBuilder implements Runnable {
         String home = url.getProtocol() + "://" + url.getHost();
         String path = url.getFile();
 
-        Site site = Repos.siteRepo.findByUrl(home).orElse(null);
+        Site site;
+        synchronized (Site.class) {
+            site = Repos.siteRepo.findByUrl(home).orElse(null);
+        }
         if (site == null) {
             return NOT_FOUND;
         }

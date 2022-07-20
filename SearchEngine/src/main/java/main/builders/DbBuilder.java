@@ -22,7 +22,7 @@ public class DbBuilder implements CommandLineRunner {
 
         List<Props.SiteUrlName> siteUrlNames = props.getSites();
         for (var siteUrlName : siteUrlNames) {
-            boolean isIndexing = SiteBuilder.buildSite(siteUrlName.getUrl());
+            SiteBuilder.buildSite(siteUrlName.getUrl());
         }
     }
 

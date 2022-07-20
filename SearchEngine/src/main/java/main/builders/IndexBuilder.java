@@ -1,8 +1,7 @@
 package main.builders;
 
 import main.Lemmatizator.Lemmatizator;
-import main.apiResponses.StatisticsResponse;
-import main.application_properties.Props;
+//import main.apiResponses.StatisticsResponse;
 import main.model.*;
 import main.repository.Repos;
 import org.jsoup.Jsoup;
@@ -10,9 +9,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class IndexBuilder {
     private final Site site;
@@ -20,7 +16,7 @@ public class IndexBuilder {
     private Map<String, Lemma> lemmas;
     private Map<Integer, Index> indexes;
     private Set<String> lemmasInPage;
-    private static List<Field> fields;
+    private static List<Field> fields = new ArrayList<>();
 
     public IndexBuilder(Site site, Page page, Map<String, Lemma> lemmas, Map<Integer, Index> indexes) {
         this.site = site;

@@ -43,6 +43,15 @@ public class IndexingController {
         return new ErrorResponse(result);
     }
 
+    @PostMapping("/api/indexSite")
+    public Response indexSite(@RequestParam String url) {
+        String result = SiteBuilder.buildSingleSite(url);
+        if (result.equals(PageBuilder.OK)) {
+            return new Response();
+        }
+        return new ErrorResponse(result);
+    }
+
     @GetMapping("/api/statistics")
     public Response statistics() {
         return SiteBuilder.getStatistics();

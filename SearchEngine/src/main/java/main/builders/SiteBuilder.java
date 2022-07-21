@@ -166,6 +166,21 @@ public class SiteBuilder implements Runnable {
         return !IS_INDEXING;
     }
 
+
+    public static String buildSingleSite(String url) {
+        if (indexingSites.containsKey(url)) {
+            return PageBuilder.RUNNING;
+        }
+        String siteName = Props.SiteUrlName.getNameByUrl(url);
+        if (siteName.equals("")) {
+            return PageBuilder.NOT_FOUND;
+        }
+
+        buildSite(url);
+
+        return PageBuilder.OK;
+    }
+
     public static boolean stopIndexing() {
         if (indexingSites.isEmpty()) {
             return !IS_INDEXING;

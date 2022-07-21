@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -49,6 +50,14 @@ public class Props {
             sun.setUrl(url.getProtocol() + "://" + url.getHost());
         }
     }
+
+    public static List<String> getAllSiteUrls() {
+        List<String> siteUrls = new ArrayList<>();
+        List<Props.SiteUrlName> urlNames = Props.getInst().getSites();
+        urlNames.forEach(sun -> siteUrls.add(sun.getUrl()));
+        return siteUrls;
+    }
+
 
     @Data
     public static class SiteUrlName {

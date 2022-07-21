@@ -6,6 +6,7 @@ import main.repository.Repos;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.util.*;
 
@@ -59,14 +60,13 @@ public class IndexBuilder {
     public void fillLemmasAndIndexes() {
         Document doc = Jsoup.parse(page.getContent());
         for (Field field : fields) {
-            Element element = doc.getElementsByTag(field.getSelector()).first();
-            if (element == null) {
-                continue;
-            }
-            String text = element.text();
-            List<String> lemmaNames = Lemmatizator.decomposeTextToLemmas(text);
-            for (String lemmaName : lemmaNames) {
-                insertIntoLemmasAndIndexes(lemmaName, field.getWeight());
+            Elements elements =  doc.getElementsByTag(field.getSelector());
+            for (Element element : elements) {
+                String text = element.text();
+                List<String> lemmaNames = Lemmatizator.decomposeTextToLemmas(text);
+                for (String lemmaName : lemmaNames) {
+                    insertIntoLemmasAndIndexes(lemmaName, field.getWeight());
+                }
             }
         }
     }

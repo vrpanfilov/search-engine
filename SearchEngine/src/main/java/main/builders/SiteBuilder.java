@@ -153,11 +153,11 @@ public class SiteBuilder implements Runnable {
         if (!indexingSites.isEmpty()) {
             return IS_INDEXING;
         }
-        synchronized (PageBuilder.indexingPages) {
-            if (!PageBuilder.indexingPages.isEmpty()) {
-                return IS_INDEXING;
-            }
-        }
+//        synchronized (PageBuilder.indexingPages) {
+//            if (!PageBuilder.indexingPages.isEmpty()) {
+//                return IS_INDEXING;
+//            }
+//        }
 
         List<Props.SiteUrlName> siteUrlNames = Props.getInst().getSites();
         for (var siteUrlName : siteUrlNames) {

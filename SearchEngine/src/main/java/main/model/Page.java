@@ -39,4 +39,9 @@ public class Page implements Serializable {
     public int hashCode() {
         return path.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return  "id: " + id + ", siteId: " + site.getId() + ", path: " + path;
+    }
 }

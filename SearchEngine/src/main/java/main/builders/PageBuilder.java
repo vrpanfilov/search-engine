@@ -26,34 +26,40 @@ public class PageBuilder implements Runnable {
     private static ExecutorService executor;
     final static int forSitesThreadNumber =
             Props.getInst().getForSitesThreadNumber();
-    public static final Map<String /*siteUrl*/, String/*pagePath*/> indexingPages = new HashMap<>();
+
     private Site site;
     private Page oldPage;
-    private Page page;
+    private Page page = null;
 
     public PageBuilder(Site site, String pagePath) {
         this.site = site;
         oldPage = Repos.pageRepo.findBySiteAndPath(site, pagePath).orElse(null);
 
         Node node = new Node(site, pagePath);
+        node.setFromPageBuilder(true);
         Document doc = node.processAndRetunPageDoc();
+        if (doc == null) {
+            return;
+        }
         int id = node.getAddedPageId();
         page = Repos.pageRepo.findById(id).get();
+        if (page == null) {
+            return;
+        }
         page.setContent(doc.outerHtml());
         page.setPath(pagePath);
+
     }
 
     @Override
     public void run() {
-        List<Lemma> lemmaList;
-        lemmaList = Repos.lemmaRepo.findAllBySite(site);
+        List<Lemma> lemmaList = Repos.lemmaRepo.findAllBySite(site);
         Map<String, Lemma> lemmas = new HashMap<>();
         for (Lemma lemma : lemmaList) {
             lemmas.put(lemma.getLemma(), lemma);
         }
 
-        List<Index> indexList;
-        indexList = Repos.indexRepo.findAllBySiteId(site.getId());
+        List<Index> indexList = Repos.indexRepo.findAllBySiteId(site.getId());
         Map<Integer, Index> indexes = new HashMap<>();
         for (Index index : indexList) {
             indexes.put(index.hashCode(), index);
@@ -62,54 +68,64 @@ public class PageBuilder implements Runnable {
         IndexBuilder indexBuilder = new IndexBuilder(site, page, lemmas, indexes);
         indexBuilder.fillLemmasAndIndexes();
 
-        for (Index index : indexes.values().stream()
-                .filter(index -> index.getPage().getId() == oldPage.getId())
-                .toList()) {
-            Lemma lemma = index.getLemma();
-            lemma.setFrequency(lemma.getFrequency() - 1);
-            lemma = lemma;
-        }
+        List<Lemma> lemmasToDelete = new ArrayList<>();
+        if (oldPage != null) {
 
-        saveLemmasAndIndexes(lemmas, indexes);
+            var a = indexes.values().stream()
+                    .filter(index -> index.getPage().getId() == oldPage.getId())
+                    .toList();
 
-        synchronized (Page.class) {
-            Repos.pageRepo.deleteById(oldPage.getId());
-        }
-
-        synchronized (indexingPages) {
-            indexingPages.remove(oldPage.getSite().getUrl(), oldPage.getPath());
-        }
-        oldPage = oldPage;
-    }
-
-    public void saveLemmasAndIndexes(Map<String, Lemma> lemmas, Map<Integer, Index> indexes) {
-        List<Index> pageIndexes = indexes.values().stream()
-                .filter(index -> index.getPage().getId() == page.getId())
-                .toList();
-        List<Lemma> pageLemmas = new ArrayList<>();
-        for (Index index : pageIndexes) {
-            pageLemmas.add(index.getLemma());
+            for (Index index : indexes.values().stream()
+                    .filter(index -> index.getPage().getId() == oldPage.getId())
+                    .toList()) {
+                Lemma lemma = index.getLemma();
+                lemma.setFrequency(lemma.getFrequency() - 1);
+                if (lemma.getFrequency() == 0) {
+                    lemmas.remove(lemma.getLemma());
+                    lemmasToDelete.add(lemma);
+                }
+            }
         }
 
         synchronized (Lemma.class) {
-            Repos.lemmaRepo.saveAllAndFlush(pageLemmas);
+            Repos.lemmaRepo.deleteAllInBatch(lemmasToDelete);
         }
 
+        List<Index> pageIndexes = new ArrayList<>();
+        for (Index index : indexes.values().stream()
+                .filter(index -> index.getPage().getId() == page.getId())
+                .toList()) {
+            pageIndexes.add(index);
+        }
+
+        synchronized (Page.class) {
+            Repos.pageRepo.saveAndFlush(page);
+        }
+        synchronized (Lemma.class) {
+            Repos.lemmaRepo.deleteAllInBatch(lemmasToDelete);
+            Repos.lemmaRepo.saveAllAndFlush(lemmaList);
+        }
         synchronized (Index.class) {
             Repos.indexRepo.saveAllAndFlush(pageIndexes);
         }
+        synchronized (Page.class) {
+            if (oldPage != null) {
+                Repos.pageRepo.deleteById(oldPage.getId());
+            }
+        }
+
+        SiteBuilder.getIndexingSites().remove(site.getUrl());
     }
 
     public static String indexPage(String stringUrl) {
+        synchronized (Executors.class) {
+            if (executor == null) {
+                executor = Executors.newFixedThreadPool(forSitesThreadNumber);
+            }
+        }
+
         if (!SiteBuilder.getIndexingSites().isEmpty()) {
             return RUNNING;
-        }
-        if (executor == null) {
-            synchronized (Executors.class) {
-                if (executor == null) {
-                    executor = Executors.newFixedThreadPool(forSitesThreadNumber);
-                }
-            }
         }
 
         URL url = null;
@@ -131,16 +147,15 @@ public class PageBuilder implements Runnable {
             return RUNNING;
         }
 
-        synchronized (indexingPages) {
-            if (indexingPages.containsKey(site.getUrl()) &&
-                    indexingPages.containsValue(path)) {
-                return RUNNING;
-            }
-            indexingPages.put(site.getUrl(), path);
-        }
+        SiteBuilder.getIndexingSites().put(site.getUrl(), site);
 
         PageBuilder pageBuilder = new PageBuilder(site, path);
-        executor.execute(pageBuilder);
+        if (pageBuilder.page == null) {
+            return NOT_FOUND;
+        }
+
+//        executor.execute(pageBuilder);
+        pageBuilder.run();
 
         return OK;
     }

@@ -29,6 +29,7 @@ public class SearchRequest {
     }
 
     public static Response search(String query, String site, Integer offset, Integer limit) {
+
         List<String> queryLemmas = Lemmatizator.decomposeTextToLemmas(query);
         if (queryLemmas.isEmpty()) {
             return new ErrorResponse("Задан пустой поисковый запрос");
@@ -49,7 +50,9 @@ public class SearchRequest {
         }
 
         System.out.println("siteUrls: " + siteUrls + ", offset:  " + offset + ", limit: " + limit);
+
         SearchRequest searchRequest = new SearchRequest(queryLemmas, site, offset, limit);
+
         return searchRequest.processRequest();
     }
 

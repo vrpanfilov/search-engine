@@ -36,6 +36,7 @@ public class Node {
     private ConcurrentLinkedQueue<String> lastNodes;
     private CopyOnWriteArraySet<String> forbiddenNodes;
     private int addedPageId;
+    private boolean fromPageBuilder = false;
 
 
     public Node(Site site, String pagePath) {
@@ -94,15 +95,18 @@ public class Node {
 
             int errorCode;
             if (message.contains("UnsupportedMimeTypeException")) {
-                errorCode = 404;    // Ссылка на pdf, jpg, png документы
+                errorCode = 415;    // Ссылка на pdf, jpg, png документы
             } else if (message.contains("Status=401")) {
-                errorCode = 404;    // На несуществующий домен
+                errorCode = 401;    // На несуществующий домен
             } else if (message.contains("Status=403")) {
-                errorCode = 404;    // Нет доступа, 403 Forbidden
+                errorCode = 403;    // Нет доступа, 403 Forbidden
             } else if (message.contains("Status=404")) {
+                if (fromPageBuilder) {
+                    return null;
+                }
                 errorCode = 404;    // // Ссылка на pdf-документ, несущ. страница, проигрыватель
             } else if (message.contains("Status=500")) {
-                errorCode = 404;    // Страница авторизации
+                errorCode = 401;    // Страница авторизации
             } else if (message.contains("ConnectException: Connection refused")) {
                 errorCode = 500;    // ERR_CONNECTION_REFUSED, не удаётся открыть страницу
             } else {

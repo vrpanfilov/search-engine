@@ -26,7 +26,7 @@ public class Index {
 
     @Override
     public int hashCode() {
-        return page.hashCode() + lemma.hashCode();
+        return id + page.hashCode() + lemma.hashCode();
     }
 
     @Column(name = "`rank`", nullable = false)

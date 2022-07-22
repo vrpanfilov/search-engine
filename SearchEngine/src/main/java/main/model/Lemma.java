@@ -21,6 +21,10 @@ public class Lemma {
     @Column(columnDefinition = "varchar(255)", nullable = false)
     private String lemma;
 
+    public void setFrequency(float frequency) {
+        this.frequency = frequency;
+    }
+
     @Column(nullable = false)
     private float frequency;
 

@@ -89,7 +89,7 @@ public class SiteBuilder implements Runnable {
                 break;
             }
 
-            System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт " + site.getName() + " построен за " +
+            System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт \"" + site.getName() + "\" построен за " +
                     (System.currentTimeMillis() - begin) / 1000 + " сек");
 
             Site prevSite = Repos.siteRepo.findByNameAndType(site.getName(), Site.INDEXED)

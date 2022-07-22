@@ -1,6 +1,5 @@
 package main.builders;
 
-import main.application_properties.Props;
 import main.model.Index;
 import main.model.Lemma;
 import main.model.Page;
@@ -14,18 +13,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class PageBuilder implements Runnable {
     public static final String OK = "OK";
     public static final String NOT_FOUND = "\"Данная страница находится за пределами сайтов, " +
             "указанных в конфигурационном файле";
     public static final String RUNNING = "Индексация уже запущена";
-
-    private static ExecutorService executor;
-    final static int forSitesThreadNumber =
-            Props.getInst().getForSitesThreadNumber();
 
     private Site site;
     private Page oldPage;
@@ -118,12 +111,6 @@ public class PageBuilder implements Runnable {
     }
 
     public static String indexPage(String stringUrl) {
-        synchronized (Executors.class) {
-            if (executor == null) {
-                executor = Executors.newFixedThreadPool(forSitesThreadNumber);
-            }
-        }
-
         if (!SiteBuilder.getIndexingSites().isEmpty()) {
             return RUNNING;
         }
@@ -154,7 +141,6 @@ public class PageBuilder implements Runnable {
             return NOT_FOUND;
         }
 
-//        executor.execute(pageBuilder);
         pageBuilder.run();
 
         return OK;

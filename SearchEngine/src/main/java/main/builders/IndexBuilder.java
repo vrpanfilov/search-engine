@@ -16,7 +16,17 @@ public class IndexBuilder {
     private Map<String, Lemma> lemmas;
     private Map<Integer, Index> indexes;
     private Set<String> lemmasInPage;
-    private static List<Field> fields = new ArrayList<>();
+
+    private static List<Field> fields;
+
+    public static List<Field> getFields() {
+        synchronized (Field.class) {
+            if (fields == null) {
+                fields = Repos.fieldRepo.findAll();
+            }
+            return fields;
+        }
+    }
 
     public IndexBuilder(Site site, Page page, Map<String, Lemma> lemmas, Map<Integer, Index> indexes) {
         this.site = site;
@@ -27,7 +37,6 @@ public class IndexBuilder {
     }
 
     public static void build(Site site) {
-        fields = Repos.fieldRepo.findAll();
         synchronized (Lemma.class) {
             Repos.lemmaRepo.deleteAllInBatchBySite(site);
         }
@@ -59,8 +68,8 @@ public class IndexBuilder {
 
     public void fillLemmasAndIndexes() {
         Document doc = Jsoup.parse(page.getContent());
-        for (Field field : fields) {
-            Elements elements =  doc.getElementsByTag(field.getSelector());
+        for (Field field : getFields()) {
+            Elements elements = doc.getElementsByTag(field.getSelector());
             for (Element element : elements) {
                 String text = element.text();
                 List<String> lemmaNames = Lemmatizator.decomposeTextToLemmas(text);
@@ -102,7 +111,7 @@ public class IndexBuilder {
     }
 
     public void saveLemmasAndIndexes() {
-        System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт " + site.getName() + ": cохраняем леммы");
+        System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт \"" + site.getName() + "\": cохраняем леммы");
         if (SiteBuilder.isStopping()) {
             return;
         }
@@ -111,7 +120,7 @@ public class IndexBuilder {
             Repos.lemmaRepo.saveAllAndFlush(lemmaCollection);
         }
 
-        System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт " + site.getName() + ": cохраняем индексы");
+        System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт \"" + site.getName() + "\": cохраняем индексы");
         int ind = 1;
         for (Page page : site.getPages()) {
             if (SiteBuilder.isStopping()) {
@@ -129,7 +138,7 @@ public class IndexBuilder {
                 System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт " + site.getName() + ": сохранено страниц - " + ind);
             }
         }
-        System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт " + site.getName() + ": " +
-                " всего сохранено страниц - " + site.getPages().size());
+        System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт \"" + site.getName() + "\": " +
+                "всего сохранено страниц - " + site.getPages().size());
     }
 }

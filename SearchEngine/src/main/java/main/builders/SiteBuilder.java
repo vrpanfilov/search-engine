@@ -89,7 +89,7 @@ public class SiteBuilder implements Runnable {
                 break;
             }
 
-            System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт \"" + site.getName() + "\" построен за " +
+            System.out.println(IndexBuilder.TABS + "Сайт \"" + site.getName() + "\" построен за " +
                     (System.currentTimeMillis() - begin) / 1000 + " сек");
 
             Site prevSite = Repos.siteRepo.findByNameAndType(site.getName(), Site.INDEXED)
@@ -131,11 +131,9 @@ public class SiteBuilder implements Runnable {
     }
 
     public static void buildSite(String siteUrl) {
-        if (executor == null) {
-            synchronized (Executors.class) {
-                if (executor == null) {
-                    executor = Executors.newFixedThreadPool(forSitesThreadNumber);
-                }
+        synchronized (Executors.class) {
+            if (executor == null) {
+                executor = Executors.newFixedThreadPool(forSitesThreadNumber);
             }
         }
 

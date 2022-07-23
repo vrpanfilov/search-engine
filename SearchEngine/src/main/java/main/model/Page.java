@@ -37,11 +37,11 @@ public class Page implements Serializable {
 
     @Override
     public int hashCode() {
-        return path.hashCode();
+        return path != null ? path.hashCode() : 0;
     }
 
     @Override
     public String toString() {
-        return  "id: " + id + ", siteId: " + site.getId() + ", path: " + path;
+        return "id: " + id + ", siteId: " + site.getId() + ", path: " + path;
     }
 }

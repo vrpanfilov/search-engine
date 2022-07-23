@@ -110,8 +110,10 @@ public class IndexBuilder {
         }
     }
 
+    public static final String TABS = "\t\t\t\t\t\t\t\t\t\t\t\t";
+
     public void saveLemmasAndIndexes() {
-        System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт \"" + site.getName() + "\": cохраняем леммы");
+        System.out.println(TABS + "Сайт \"" + site.getName() + "\": cохраняем леммы");
         if (SiteBuilder.isStopping()) {
             return;
         }
@@ -120,7 +122,7 @@ public class IndexBuilder {
             Repos.lemmaRepo.saveAllAndFlush(lemmaCollection);
         }
 
-        System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт \"" + site.getName() + "\": cохраняем индексы");
+        System.out.println(TABS + "Сайт \"" + site.getName() + "\": cохраняем индексы");
         int ind = 1;
         for (Page page : site.getPages()) {
             if (SiteBuilder.isStopping()) {
@@ -135,10 +137,10 @@ public class IndexBuilder {
             }
             ind++;
             if (ind % 100 == 0) {
-                System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт " + site.getName() + ": сохранено страниц - " + ind);
+                System.out.println(TABS + "Сайт " + site.getName() + ": сохранено страниц - " + ind);
             }
         }
-        System.out.println("\t\t\t\t\t\t\t\t\t\t\t\tСайт \"" + site.getName() + "\": " +
+        System.out.println(TABS + "Сайт \"" + site.getName() + "\": " +
                 "всего сохранено страниц - " + site.getPages().size());
     }
 }

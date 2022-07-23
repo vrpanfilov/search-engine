@@ -30,6 +30,7 @@ public class Node {
     public static final int JS_CONNECTION_REFUSED = 607;
     public static final int JS_CONNECTION_TIMED_OUT = 608;
     public static final int JS_READ_TIMED_OUT = 609;
+
     private Site site;
     private String pagePath;
     private Set<String> viewedNodes;
@@ -114,7 +115,6 @@ public class Node {
             }
             page.setCode(errorCode);
         }
-
 
         synchronized (Page.class) {
             Repos.pageRepo.saveAndFlush(page);

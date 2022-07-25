@@ -35,17 +35,8 @@ public class IndexingController {
     }
 
     @PostMapping("/api/indexPage")
-    public Response indexPage(@RequestParam String url) {
+    public Response indexPage(@RequestParam(required = false) String url) {
         String result = PageBuilder.indexPage(url);
-        if (result.equals(PageBuilder.OK)) {
-            return new Response();
-        }
-        return new ErrorResponse(result);
-    }
-
-    @PostMapping("/api/indexSite")
-    public Response indexSite(@RequestParam String url) {
-        String result = SiteBuilder.buildSingleSite(url);
         if (result.equals(PageBuilder.OK)) {
             return new Response();
         }

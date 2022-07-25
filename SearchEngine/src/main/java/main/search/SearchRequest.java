@@ -13,7 +13,7 @@ import main.repository.Repos;
 import java.util.*;
 
 public class SearchRequest {
-    private List<String> queryWords;
+    private final List<String> queryWords;
     private final List<String> siteUrls;
     private final int offset;
     private final int limit;

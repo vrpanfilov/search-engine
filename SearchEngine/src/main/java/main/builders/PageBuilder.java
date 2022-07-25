@@ -124,7 +124,13 @@ public class PageBuilder implements Runnable {
         String home = url.getProtocol() + "://" + url.getHost();
         String path = url.getFile();
 
-        Site site;
+        Site site = Repos.siteRepo.findAllByUrl(home).stream()
+                .filter(sit -> sit.getType().equals(Site.INDEXING))
+                .findFirst().orElse(null);
+        if (site != null) {
+            Repos.siteRepo.delete(site);
+        }
+
         site = Repos.siteRepo.findByUrl(home).orElse(null);
         if (site == null) {
             return NOT_FOUND;
@@ -134,14 +140,16 @@ public class PageBuilder implements Runnable {
             return RUNNING;
         }
 
-        SiteBuilder.getIndexingSites().put(site.getUrl(), site);
-
-        PageBuilder pageBuilder = new PageBuilder(site, path);
-        if (pageBuilder.page == null) {
-            return NOT_FOUND;
+        if (path.isEmpty()) {
+            SiteBuilder.buildSingleSite(home);
+        } else {
+            SiteBuilder.getIndexingSites().put(site.getUrl(), site);
+            PageBuilder pageBuilder = new PageBuilder(site, path);
+            if (pageBuilder.page == null) {
+                return NOT_FOUND;
+            }
+            pageBuilder.run();
         }
-
-        pageBuilder.run();
 
         return OK;
     }

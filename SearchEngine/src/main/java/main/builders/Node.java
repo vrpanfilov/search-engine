@@ -65,7 +65,6 @@ public class Node {
         try {
             Thread.sleep(500);
         } catch (Exception e) {
-            e = e;
         }
 
         Page page = new Page();

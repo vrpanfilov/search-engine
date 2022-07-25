@@ -7,19 +7,16 @@ import main.apiResponses.SearchResponse;
 import main.application_properties.Props;
 import main.model.Index;
 import main.model.Lemma;
-import main.model.Page;
 import main.model.Site;
 import main.repository.Repos;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class SearchRequest {
     private List<String> queryWords;
     private final List<String> siteUrls;
     private final int offset;
     private final int limit;
-    List<QueryLemma> queryLemmas = new ArrayList<>();
 
     public SearchRequest(List<String> queryWords, List<String> siteUrls, Integer offset, Integer limit) {
         this.queryWords = queryWords;
@@ -28,24 +25,83 @@ public class SearchRequest {
         this.limit = limit;
     }
 
+    private List<Lemma> defineRequestLemmaList() {
+        List<Lemma> lemmaList = new ArrayList<>();
+        for (String queryWord : queryWords) {
+            for (String siteUrl : siteUrls) {
+                Site site = Repos.siteRepo.findByUrl(siteUrl).get();
+                List<Lemma> lemmas = Repos.lemmaRepo.findAllByLemmaAndSite(queryWord, site);
+                for (Lemma lemma : lemmas) {
+                    lemmaList.add(lemma);
+                }
+            }
+        }
+        lemmaList.sort((l1, l2) -> Float.compare(l1.getFrequency(), l2.getFrequency()));
+        return lemmaList;
+    }
+
+    private List<PageDetails> definePageDetailsList(List<Lemma> lemmaList) {
+        Set<PageDetails> allPages = null;
+        Map<Integer, PageDetails> pageDetails = new HashMap<>();
+
+        for (Lemma lemma : lemmaList) {
+            List<Index> indices = Repos.indexRepo.findAllByLemma(lemma);
+            for (Index index : indices) {
+                PageDetails details = pageDetails.get(index.getPage().getId());
+                if (details == null) {
+                    details = new PageDetails();
+                    details.setPage(index.getPage());
+                }
+                LemmaRank lemmaRank = new LemmaRank(lemma, index.getRank());
+                details.getLemmaRanks().add(lemmaRank);
+                pageDetails.put(index.getPage().getId(), details);
+            }
+            Set<PageDetails> detailsSet = new HashSet<>(pageDetails.values());
+            if (allPages == null) {
+                allPages = detailsSet;
+            } else {
+                allPages.retainAll(detailsSet);
+            }
+            if (allPages.isEmpty()) {
+                break;
+            }
+        }
+
+        Set<PageDetails> detailsSet = new HashSet<>(pageDetails.values());
+        Set<PageDetails> finalAllPages = allPages;
+        detailsSet.removeIf(details -> !finalAllPages.contains(details));
+
+        return new ArrayList<>(detailsSet);
+    }
+
+    private void calculateRelevances(List<PageDetails> pageDetailsList) {
+        float maxRelevance = 0;
+        for (PageDetails details : pageDetailsList) {
+            float absRelevance = 0;
+            for (LemmaRank lemmaRank : details.getLemmaRanks()) {
+                absRelevance += lemmaRank.getRank();
+            }
+            details.setAbsoluteRelevance(absRelevance);
+            if (absRelevance > maxRelevance) {
+                maxRelevance = absRelevance;
+            }
+        }
+        for (PageDetails details : pageDetailsList) {
+            details.setRelativeRelevance(
+                    details.getAbsoluteRelevance() / maxRelevance);
+        }
+        pageDetailsList.sort((o1, o2) -> -Float.compare(
+                o1.getRelativeRelevance(), o2.getRelativeRelevance()));
+    }
+
     private Response processRequest() {
         Long begin = System.currentTimeMillis();
         SearchResponse response = new SearchResponse();
 //        response.createSample();
 
-        for (String queryWord : queryWords) {
-            for (String siteUrl : siteUrls) {
-                Site site = Repos.siteRepo.findByUrl(siteUrl).get();
-                Lemma lemma = Repos.lemmaRepo.findByLemmaAndSite(queryWord, site);
-                List<Index> indexes = Repos.indexRepo.findAllByLemma(lemma);
-                for (Index index : indexes) {
-                    QueryLemma queryLemma = new QueryLemma(lemma, index.getPage());
-                    queryLemmas.add(queryLemma);
-                }
-            }
-        }
-        queryLemmas.sort((ql1, ql2) ->
-                Float.compare(ql1.getLemma().getFrequency(), ql2.getLemma().getFrequency()));
+        List<Lemma> lemmaList = defineRequestLemmaList();
+        List<PageDetails> pageDetailsList = definePageDetailsList(lemmaList);
+        calculateRelevances(pageDetailsList);
 
         System.out.println(System.currentTimeMillis() - begin);
         return response;

@@ -26,4 +26,5 @@ public interface LemmaRepository extends JpaRepository<Lemma, Integer> {
     List<Lemma> findAllBySite(Site site);
 
     Lemma findByLemmaAndSite(String lemma, Site site);
+    List<Lemma> findAllByLemmaAndSite(String lemma, Site site);
 }

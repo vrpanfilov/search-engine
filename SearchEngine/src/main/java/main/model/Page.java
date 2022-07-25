@@ -37,7 +37,7 @@ public class Page implements Serializable {
 
     @Override
     public int hashCode() {
-        return path != null ? path.hashCode() : 0;
+        return path != null && site != null ? path.hashCode() + site.hashCode() : 0;
     }
 
     @Override

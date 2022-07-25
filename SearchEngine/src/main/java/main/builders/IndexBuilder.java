@@ -97,16 +97,14 @@ public class IndexBuilder {
             return;
         }
         if (lemmasInPage.contains(lemmaName)) {
-            Index index = new Index(page, lemma, 0);
-            index = indexes.get(index.hashCode());
+            Index auxIndex = new Index(page, lemma, 0);
+            Index index = indexes.get(auxIndex.hashCode());
             index.setRank(index.getRank() + weight);
-            index = index;
         } else {
             lemmasInPage.add(lemmaName);
             lemma.setFrequency(lemma.getFrequency() + 1);
             Index index = new Index(page, lemma, weight);
             indexes.put(index.hashCode(), index);
-            index = index;
         }
     }
 

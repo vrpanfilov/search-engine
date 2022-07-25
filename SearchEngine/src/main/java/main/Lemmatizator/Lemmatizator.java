@@ -22,32 +22,64 @@ public class Lemmatizator {
 
     public static List<String> decomposeTextToLemmas(String text) {
         List<String> result = new ArrayList<>();
+        LemmaAndType lemmaAndType = new LemmaAndType();
+        LemmaAndType lemmaAndTypePrev = new LemmaAndType();
         String[] words = text.split(
                 "\\s*(\\s|,|;|\\?|-|–|—|\\[|]|\\{|}|!|\\.|\\(|\\))\\s*");
 
-        for (int i = 0; i < words.length; i++) {
-            if (words[i].isEmpty()) {
+        for (String word : words) {
+            if (word.isEmpty()) {
                 continue;
             }
-            words[i] = words[i].toLowerCase(Locale.ROOT);
+            word = word.toLowerCase(Locale.ROOT);
+            word = word.replaceAll("ё", "е");
             try {
-                List<String> infos = morphology.getMorphInfo(words[i]);
+                List<String> infos = morphology.getMorphInfo(word);
+                lemmaAndTypePrev.lemma = "";
                 for (String info : infos) {
-                    int pos = info.indexOf('|');
-                    if (pos < 0) {
+                    infoToLemmaAndType(info, lemmaAndType);
+                    if (lemmaAndType.type.isEmpty()) {
                         continue;
                     }
-                    String wordType = String.valueOf(info.charAt(pos + 1));
-                    if (wordType.matches("[nfoklp]")) {
-                        continue;
+                    if (!lemmaAndTypePrev.lemma.isEmpty()) {
+                        if (lemmaAndType.type.matches("[AGKC]")) {
+                            if (lemmaAndTypePrev.type.matches("[AGKC]")) {
+                                if (lemmaAndType.lemma.length() <= lemmaAndTypePrev.lemma.length()) {
+                                    continue;
+                                }
+                            }
+                        } else {
+                            continue;
+                        }
                     }
-                    String lemmaKey = info.substring(0, pos);
-                    result.add(lemmaKey);
+                    lemmaAndTypePrev.lemma = lemmaAndType.lemma;
+                    lemmaAndTypePrev.type = lemmaAndType.type;
                 }
+                result.add(lemmaAndTypePrev.lemma);
             } catch (WrongCharaterException e) {
                 continue;
             }
         }
         return result;
+    }
+
+    private static void infoToLemmaAndType(String info, LemmaAndType lemmaAndType) {
+        int pos = info.indexOf('|');
+        if (pos < 0) {
+            lemmaAndType.type = "";
+            return;
+        }
+        String wordType = String.valueOf(info.charAt(pos + 1));
+        if (wordType.matches("[nfoklp]")) {
+            lemmaAndType.type = "";
+            return;
+        }
+        lemmaAndType.lemma = info.substring(0, pos);
+        lemmaAndType.type = wordType;
+    }
+
+    static class LemmaAndType {
+        String lemma;
+        String type;
     }
 }

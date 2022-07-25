@@ -55,7 +55,13 @@ public class Site implements Serializable {
     @Transient
     private SiteBuilder siteBuilder;
 
+    @Override
     public String toString() {
         return "id: " + id + ", url: " + url + ", name: " + name;
+    }
+
+    @Override
+    public int hashCode() {
+        return url.hashCode();
     }
 }

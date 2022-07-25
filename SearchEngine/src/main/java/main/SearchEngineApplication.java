@@ -6,7 +6,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 //TODO:
-// Во время индексирования в статистике отображаются только уже проиндексированные
+// Во время индексирования в статистике отображаются только уже проиндексированные.
+// Возможно, стоит контент страницы выделить в отдельную таблицу,
+// связанную с таблицей Page один-к-одному.
+// Убрать  запрос /api/indexSite, он может быть выполнен в запросе /api/indexPage
+// с пустым параметром
 
 @SpringBootApplication
 public class SearchEngineApplication {

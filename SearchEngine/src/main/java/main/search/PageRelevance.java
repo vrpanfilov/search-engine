@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class PageDetails {
+public class PageRelevance {
     private Page page;
     private List<LemmaRank> lemmaRanks = new ArrayList<>();
     private float absoluteRelevance;

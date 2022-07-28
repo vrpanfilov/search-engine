@@ -78,10 +78,9 @@ public class Node {
         Connection connection = null;
         try {
             Connection.Response response = Jsoup.connect(getUrl())
-                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36")
-//                    .userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; " +
-//                            "rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
-//                    .referrer("http://www.google.com")
+                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
+                            "AppleWebKit/537.36 (KHTML, like Gecko) " +
+                            "Chrome/103.0.5060.114 Safari/537.36")
                     .execute();
             int statusCode = response.statusCode();
             if (statusCode != OK) {

@@ -31,14 +31,4 @@ public class SearchResponse extends Response {
         data.setRelevance(0.912345f);
         pageDataList.add(data);
     }
-
-    @Data
-    public class PageData {
-        private String site;
-        private String siteName;
-        private String uri;
-        private String title;
-        private String snippet;
-        private float relevance;
-    }
 }

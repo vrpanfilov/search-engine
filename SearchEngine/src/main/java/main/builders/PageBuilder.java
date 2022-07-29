@@ -53,22 +53,22 @@ public class PageBuilder implements Runnable {
         }
 
         List<Index> indexList = Repos.indexRepo.findAllBySiteId(site.getId());
-        Map<Integer, Index> indexes = new HashMap<>();
+        Map<Integer, Index> indices = new HashMap<>();
         for (Index index : indexList) {
-            indexes.put(index.hashCode(), index);
+            indices.put(index.hashCode(), index);
         }
 
-        IndexBuilder indexBuilder = new IndexBuilder(site, page, lemmas, indexes);
-        indexBuilder.fillLemmasAndIndexes();
+        IndexBuilder indexBuilder = new IndexBuilder(site, page, lemmas, indices);
+        indexBuilder.fillLemmasAndIndices();
 
         List<Lemma> lemmasToDelete = new ArrayList<>();
         if (oldPage != null) {
 
-            var a = indexes.values().stream()
+            var a = indices.values().stream()
                     .filter(index -> index.getPage().getId() == oldPage.getId())
                     .toList();
 
-            for (Index index : indexes.values().stream()
+            for (Index index : indices.values().stream()
                     .filter(index -> index.getPage().getId() == oldPage.getId())
                     .toList()) {
                 Lemma lemma = index.getLemma();
@@ -84,11 +84,11 @@ public class PageBuilder implements Runnable {
             Repos.lemmaRepo.deleteAllInBatch(lemmasToDelete);
         }
 
-        List<Index> pageIndexes = new ArrayList<>();
-        for (Index index : indexes.values().stream()
+        List<Index> pageIndices = new ArrayList<>();
+        for (Index index : indices.values().stream()
                 .filter(index -> index.getPage().getId() == page.getId())
                 .toList()) {
-            pageIndexes.add(index);
+            pageIndices.add(index);
         }
 
         synchronized (Page.class) {
@@ -99,7 +99,7 @@ public class PageBuilder implements Runnable {
             Repos.lemmaRepo.saveAllAndFlush(lemmaList);
         }
         synchronized (Index.class) {
-            Repos.indexRepo.saveAllAndFlush(pageIndexes);
+            Repos.indexRepo.saveAllAndFlush(pageIndices);
         }
         synchronized (Page.class) {
             if (oldPage != null) {

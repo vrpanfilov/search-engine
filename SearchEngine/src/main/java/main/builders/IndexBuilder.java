@@ -14,7 +14,7 @@ public class IndexBuilder {
     private final Site site;
     private final Page page;
     private Map<String, Lemma> lemmas;
-    private Map<Integer, Index> indexes;
+    private Map<Integer, Index> indices;
     private Set<String> lemmasInPage;
 
     private static List<Field> fields;
@@ -28,11 +28,11 @@ public class IndexBuilder {
         }
     }
 
-    public IndexBuilder(Site site, Page page, Map<String, Lemma> lemmas, Map<Integer, Index> indexes) {
+    public IndexBuilder(Site site, Page page, Map<String, Lemma> lemmas, Map<Integer, Index> indices) {
         this.site = site;
         this.page = page;
         this.lemmas = lemmas;
-        this.indexes = indexes;
+        this.indices = indices;
         lemmasInPage = new HashSet<>();
     }
 
@@ -42,12 +42,12 @@ public class IndexBuilder {
         }
         IndexBuilder indexBuilder = new IndexBuilder(site, null, null, null);
         indexBuilder.buildIndex();
-        indexBuilder.saveLemmasAndIndexes();
+        indexBuilder.saveLemmasAndIndices();
     }
 
     private void buildIndex() {
         lemmas = new HashMap<>();
-        indexes = new HashMap<>();
+        indices = new HashMap<>();
 
         List<Page> pages = site.getPages().stream()
                 .filter(p1 -> p1.getCode() == Node.OK)
@@ -59,14 +59,14 @@ public class IndexBuilder {
             Page pag;
             pag = Repos.pageRepo.findById(page.getId()).get();
             IndexBuilder indexBuilder = new IndexBuilder(
-                    site, pag, lemmas, indexes);
-            indexBuilder.fillLemmasAndIndexes();
+                    site, pag, lemmas, indices);
+            indexBuilder.fillLemmasAndIndices();
             pag.setContent(null);
             pag.setPath(null);
         }
     }
 
-    public void fillLemmasAndIndexes() {
+    public void fillLemmasAndIndices() {
         Document doc = Jsoup.parse(page.getContent());
         for (Field field : getFields()) {
             Elements elements = doc.getElementsByTag(field.getSelector());
@@ -74,13 +74,13 @@ public class IndexBuilder {
                 String text = element.text();
                 List<String> lemmaNames = Lemmatizator.decomposeTextToLemmas(text);
                 for (String lemmaName : lemmaNames) {
-                    insertIntoLemmasAndIndexes(lemmaName, field.getWeight());
+                    insertIntoLemmasAndIndices(lemmaName, field.getWeight());
                 }
             }
         }
     }
 
-    private void insertIntoLemmasAndIndexes(String lemmaName, float weight) {
+    private void insertIntoLemmasAndIndices(String lemmaName, float weight) {
         Lemma lemma = lemmas.get(lemmaName);
         if (lemma == null) {
             lemma = new Lemma();
@@ -91,26 +91,26 @@ public class IndexBuilder {
             lemmas.put(lemmaName, lemma);
 
             Index index = new Index(page, lemma, weight);
-            indexes.put(index.hashCode(), index);
+            indices.put(index.hashCode(), index);
 
             lemmasInPage.add(lemmaName);
             return;
         }
         if (lemmasInPage.contains(lemmaName)) {
             Index auxIndex = new Index(page, lemma, 0);
-            Index index = indexes.get(auxIndex.hashCode());
+            Index index = indices.get(auxIndex.hashCode());
             index.setRank(index.getRank() + weight);
         } else {
             lemmasInPage.add(lemmaName);
             lemma.setFrequency(lemma.getFrequency() + 1);
             Index index = new Index(page, lemma, weight);
-            indexes.put(index.hashCode(), index);
+            indices.put(index.hashCode(), index);
         }
     }
 
     public static final String TABS = "\t\t\t\t\t\t\t\t\t\t\t\t";
 
-    public void saveLemmasAndIndexes() {
+    public void saveLemmasAndIndices() {
         System.out.println(TABS + "Сайт \"" + site.getName() + "\": cохраняем леммы");
         if (SiteBuilder.isStopping()) {
             return;
@@ -126,12 +126,12 @@ public class IndexBuilder {
             if (SiteBuilder.isStopping()) {
                 return;
             }
-            List<Index> pageIndexes = indexes.values().stream()
+            List<Index> pageIndices = indices.values().stream()
                     .filter(index -> index.getPage().getId() == page.getId()
                             && index.getPage().getCode() == Node.OK)
                     .toList();
             synchronized (Index.class) {
-                Repos.indexRepo.saveAllAndFlush(pageIndexes);
+                Repos.indexRepo.saveAllAndFlush(pageIndices);
             }
             ind++;
             if (ind % 100 == 0) {

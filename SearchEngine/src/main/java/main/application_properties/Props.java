@@ -15,7 +15,7 @@ import java.util.List;
 public class Props {
     private Integer forSitesThreadNumber;
     private Integer forPagesThreadNumber;
-    private Integer forIndexesThreadNumber;
+    private Integer forIndicesThreadNumber;
     private Integer repeatedPageCount;
     private Integer maxPagesInSite;
     private Boolean isFirstStagePresent;

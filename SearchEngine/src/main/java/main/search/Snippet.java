@@ -27,10 +27,22 @@ public class Snippet {
         StringBuilder builder = new StringBuilder();
         for (OwnText ownText : ownTexts) {
             defineKeyWordIndices(ownText);
-            insertBoldTags(ownText);
-            formCompositionOfFragments(ownText, builder);
+            if (ownText.containsKeyWords()) {
+                insertBoldTags(ownText);
+                ownText.formCompositionOfFragments(builder);
+            }
         }
         return builder.toString();
+    }
+
+    private void createOwnTexts(Element element) {
+        String ownText = element.ownText();
+        if (!ownText.isEmpty()) {
+            ownTexts.add(new OwnText(ownText));
+        }
+        for (Element child : element.children()) {
+            createOwnTexts(child);
+        }
     }
 
     private void defineKeyWordIndices(OwnText ownText) {
@@ -55,25 +67,12 @@ public class Snippet {
     }
 
     private void insertBoldTags(OwnText ownText) {
-        List<Integer> indices = ownText.keyWordIndices;
+        List<Integer> indices = ownText.getKeyWordIndices();
         StringBuilder builder = new StringBuilder(ownText.getText());
         for (int ind = indices.size() - 1; ind >= 0; ) {
             builder.insert(indices.get(ind--), "</b>");
             builder.insert(indices.get(ind--), "<b>");
         }
         ownText.setText(builder.toString());
-    }
-
-    private void createOwnTexts(Element element) {
-        String ownText = element.ownText();
-        if (!ownText.isEmpty()) {
-            ownTexts.add(new OwnText(ownText));
-        }
-        for (Element child : element.children()) {
-            createOwnTexts(child);
-        }
-    }
-
-    private void formCompositionOfFragments(OwnText ownText, StringBuilder builder) {
     }
 }

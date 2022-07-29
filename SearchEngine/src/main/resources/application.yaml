@@ -16,7 +16,7 @@ logging:
 
 forSitesThreadNumber: 12
 forPagesThreadNumber: 16
-forIndexesThreadNumber: 16
+forIndicesThreadNumber: 16
 repeatedPageCount: 14
 maxPagesInSite: 4000
 

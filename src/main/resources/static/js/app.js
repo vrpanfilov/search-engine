@@ -3,7 +3,7 @@
 const classList = document.getElementById('app-sidepanel').classList;
 
 function responsiveSidePanel() {
-  if(window.innerWidth >= 1200) {
+  if (window.innerWidth >= 1200) {
     classList.remove('sidepanel-hidden');
     classList.add('sidepanel-visible');
 
@@ -32,7 +32,7 @@ $(function () {
     }
   });
 
-  $('#sidepanel-close').bind('click', function (e) {
+  $('#sidepanel-close').on('click', function (e) {
     e.preventDefault();
     $('#sidepanel-toggler').click();
   });

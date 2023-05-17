@@ -15,6 +15,7 @@ function responsiveSidePanel() {
 
 $(function () {
   $(window).on('load', function () {
+    console.log('load');
     responsiveSidePanel();
   });
 

@@ -10,8 +10,10 @@
 
   <!-- App CSS -->
   <!--	<link id="theme-style" rel="stylesheet" href="assets/css/portal.css">-->
-  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/static/css/app.css">
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+<!--  <link rel="shortcut icon" href="favicon.ico">-->
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/app.css">
 
 </head>
 
@@ -41,26 +43,34 @@
     <div class="sidepanel-inner d-flex flex-column">
       <a href="#" id="sidepanel-close" class="sidepanel-close d-xl-none">&times;</a>
       <div class="app-branding">
-        <a class="app-logo" href="index.html">
-          <img class="logo-icon me-2" src="/static/img/icons/dashboard.svg"
-               alt="logo"><span class="logo-text">Search Engine</span></a>
-
+        <a class="nav-link active" href="index.html">
+          <img class="nav-icon" src="/img/icons/search.svg" alt="dashboard.svg" width="32"
+               height="32"/>
+          <span class="text-white ms-2 h4">Search Engine</span>
+        </a><!--//nav-link-->
       </div><!--//app-branding-->
 
       <nav id="app-nav-main" class="app-nav app-nav-main flex-grow-1">
         <ul class="app-menu list-unstyled accordion" id="menu-accordion">
           <li class="nav-item">
-            <!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
-            <a class="nav-link active" href="index.html">
-						        <span class="nav-icon">
-						        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-house-door"
-                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-		  <path fill-rule="evenodd"
-            d="M7.646 1.146a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 .146.354v7a.5.5 0 0 1-.5.5H9.5a.5.5 0 0 1-.5-.5v-4H7v4a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .146-.354l6-6zM2.5 7.707V14H6v-4a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v4h3.5V7.707L8 2.207l-5.5 5.5z"/>
-		  <path fill-rule="evenodd" d="M13 2.5V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
-		</svg>
-						         </span>
-              <span class="nav-link-text">Overview</span>
+            <a id="dashboard-command" class="nav-link active" href="#">
+              <img class="nav-icon" src="/img/icons/dashboard.svg" alt="dashboard.svg" width="32"
+                   height="32"/>
+              <span class="nav-link-text ms-2">Dashboard</span>
+            </a><!--//nav-link-->
+          </li><!--//nav-item-->
+          <li class="nav-item">
+            <a id="management-command" class="nav-link" href="#">
+              <img class="nav-icon" src="/img/icons/management.svg" alt="dashboard.svg" width="32"
+                   height="32"/>
+              <span class="nav-link-text ms-2">Management</span>
+            </a><!--//nav-link-->
+          </li><!--//nav-item-->
+          <li class="nav-item">
+            <a id="search-command" class="nav-link" href="#">
+              <img class="nav-icon" src="/img/icons/search.svg" alt="dashboard.svg" width="32"
+                   height="32"/>
+              <span class="nav-link-text ms-2">Search</span>
             </a><!--//nav-link-->
           </li><!--//nav-item-->
         </ul><!--//app-menu-->
@@ -69,19 +79,10 @@
         <nav class="app-nav app-nav-footer">
           <ul class="app-menu footer-menu list-unstyled">
             <li class="nav-item">
-              <!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
-              <a class="nav-link"
-                 href="https://themes.3rdwavemedia.com/bootstrap-templates/admin-dashboard/portal-free-bootstrap-admin-dashboard-template-for-developers/">
-							        <span class="nav-icon">
-							            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-download"
-                               fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-	  <path fill-rule="evenodd"
-          d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-	  <path fill-rule="evenodd"
-          d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-	</svg>
-							        </span>
-                <span class="nav-link-text">Download</span>
+              <a id="exit" class="nav-link" href="#">
+                <img class="nav-icon" src="/img/icons/exit.svg" alt="exit.svg" width="32"
+                     height="32"/>
+                <span class="nav-link-text ms-2">Exit</span>
               </a><!--//nav-link-->
             </li><!--//nav-item-->
           </ul><!--//footer-menu-->
@@ -94,22 +95,140 @@
 
 <div class="app-wrapper">
 
-  <div class="app-content pt-3 p-md-3 p-lg-4">
-    <div class="container-xl">
-      <h1 class="app-page-title">Overview</h1>
-    </div><!--//container-fluid-->
-  </div><!--//app-content-->
+  <div class="container mt-0 mt-sm-3  pt-3 d-flex" id="dashboard">
+    <div class="container mt-5" style="max-width: 916px;">
+      <div class="row" id="totalStatistics">
+        <div class="col-auto mb-3 ms-4 border border-primary bg-secondary rounded p-3 bg-white">
+          <span class="lead fw-bold">Sites: </span>
+          <span class="lead" id="totalSites">3</span>
+        </div>
+        <div class="col-auto mb-3 ms-4 border border-primary bg-secondary rounded p-3 bg-white">
+          <span class="lead fw-bold">Pages: </span>
+          <span class="lead" id="totalPages">2658</span>
+        </div>
+        <div class="col-auto mb-3 ms-4 border border-primary bg-secondary rounded p-3 bg-white">
+          <span class="lead fw-bold">Lemmas: </span>
+          <span class="lead" id="totalLemmas">59515</span>
+        </div>
+      </div> <!--totalStatistics-->
+
+      <br>
+      <div class="row" id="siteStatistics">
+        <div class="accordion open" id="siteAccordion">
+          <div class="accordion-item" id="site1">
+            <div class="accordion-header" id="siteHeader1">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1"
+                      aria-expanded="false" aria-controls="collapse1">
+                Светловка - https://www.svetlovka.ru
+                <img src="/img/icons/checked.svg" class="ms-3 me-2"
+                     style="width: 1.5em; height: 1.5em;" alt="checked.svg"/>
+                INDEXED
+              </button>
+            </div>
+            <div id="collapse1" class="accordion-collapse collapse " aria-labelledby="siteHeader1"
+                 data-bs-parent="#siteAccordion">
+              <div class="accordion-body">
+                <div class="row">
+                  <div class="col-md-2">Status time:</div>
+                  <div class="col-md-3">12.05.2023 11:07:24</div>
+                </div>
+                <div class="row">
+                  <div class="col-md-2">Pages:</div>
+                  <div class="col-md-3">245</div>
+                </div>
+                <div class="row">
+                  <div class="col-md-2">Lemmas:</div>
+                  <div class="col-md-3">8307</div>
+                </div>
+                <div class="row">
+                  <div class="col-md-2">Error:</div>
+                  <div class="col-md-3"></div>
+                </div>
+              </div>
+            </div>
+          </div> <!--accordion-item-->
+
+          <div class="accordion-item" id="site2">
+            <div class="accordion-header" id="siteHeader2">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2"
+                      aria-expanded="false" aria-controls="collapse2">
+                Кафедральный собор святых Петра и Павла - https://www.lutherancathedral.ru
+                <img src="/img/icons/checked.svg" class="ms-3 me-2"
+                     style="width: 1.5em; height: 1.5em;" alt="checked.svg"/>
+                INDEXED
+              </button>
+            </div>
+            <div id="collapse2" class="accordion-collapse collapse " aria-labelledby="siteHeader2"
+                 data-bs-parent="#siteAccordion">
+              <div class="accordion-body">
+                <div class="row">
+                  <div class="col-md-2">Status time:</div>
+                  <div class="col-md-3">12.05.2023 11:07:24</div>
+                </div>
+                <div class="row">
+                  <div class="col-md-2">Pages:</div>
+                  <div class="col-md-3">914</div>
+                </div>
+                <div class="row">
+                  <div class="col-md-2">Lemmas:</div>
+                  <div class="col-md-3">14420</div>
+                </div>
+                <div class="row">
+                  <div class="col-md-2">Error:</div>
+                  <div class="col-md-3"></div>
+                </div>
+              </div>
+            </div>
+          </div> <!--accordion-item-->
+
+          <div class="accordion-item" id="site3">
+            <div class="accordion-header" id="siteHeader3">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3"
+                      aria-expanded="false" aria-controls="collapse3">
+                Театр «Et Cetera» - https://et-cetera.ru
+                <img src="/img/icons/checked.svg" class="ms-3 me-2"
+                     style="width: 1.5em; height: 1.5em;" alt="checked.svg"/>
+                INDEXED
+              </button>
+            </div>
+            <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="siteHeader3"
+                 data-bs-parent="#siteAccordion">
+              <div class="accordion-body">
+                <div class="row">
+                  <div class="col-md-2">Status time:</div>
+                  <div class="col-md-3">12.05.2023 11:07:23</div>
+                </div>
+                <div class="row">
+                  <div class="col-md-2">Pages:</div>
+                  <div class="col-md-3">1499</div>
+                </div>
+                <div class="row">
+                  <div class="col-md-2">Lemmas:</div>
+                  <div class="col-md-3">36788</div>
+                </div>
+                <div class="row">
+                  <div class="col-md-2">Error:</div>
+                  <div class="col-md-3"></div>
+                </div>
+              </div>
+            </div>
+          </div> <!--accordion-item-->
+
+        </div> <!--siteAccordion-->
+      </div> <!--siteStatistics-->
+    </div>
+  </div> <!--dashboard-->
 
 </div><!--//app-wrapper-->
 
 
 <!-- Javascript -->
-<script src="/static/js/popper.min.js"></script>
-<script src="/static/js/bootstrap.min.js"></script>
-<script src="/static/js/jquery.min.js"></script>
+<!--<script src="/static/js/popper.min.js"></script>-->
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.min.js"></script>
 
 <!-- Page Specific JS -->
-<script src="/static/js/app.js" charset="utf-8"></script>
+<script src="/js/app.js" charset="utf-8"></script>
 
 </body>
 </html>

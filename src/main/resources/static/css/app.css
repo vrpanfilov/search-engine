@@ -424,12 +424,14 @@ button.close:focus {
   }
 }
 
+/*noinspection CssNonIntegerLengthInPixels*/
 @media (max-width: 575.98px)and (prefers-reduced-motion: reduce) {
   .app-search-box {
     transition: none
   }
 }
 
+/*noinspection CssNonIntegerLengthInPixels*/
 @media (max-width: 575.98px) {
   .app-search-box .app-search-form .search-input {
     border-radius: 0;
@@ -442,6 +444,7 @@ button.close:focus {
   }
 }
 
+/*noinspection CssNonIntegerLengthInPixels*/
 @media (max-width: 575.98px) {
   .app-search-box.is-visible {
     display: block
@@ -661,6 +664,7 @@ button.close:focus {
   margin-bottom: 0
 }
 
+/*noinspection CssNonIntegerLengthInPixels*/
 @media (max-width: 1199.98px) {
   .app-sidepanel {
     transition: all .4s ease-in-out;
@@ -668,24 +672,28 @@ button.close:focus {
   }
 }
 
+/*noinspection CssNonIntegerLengthInPixels*/
 @media (max-width: 1199.98px)and (prefers-reduced-motion: reduce) {
   .app-sidepanel {
     transition: none
   }
 }
 
+/*noinspection CssNonIntegerLengthInPixels*/
 @media (max-width: 1199.98px) {
   .app-sidepanel.sidepanel-visible {
     display: block
   }
 }
 
+/*noinspection CssNonIntegerLengthInPixels*/
 @media (max-width: 1199.98px) {
   .sidepanel-visible .sidepanel-close {
     display: inline-block
   }
 }
 
+/*noinspection CssNonIntegerLengthInPixels*/
 @media (max-width: 1199.98px) {
   .sidepanel-visible .sidepanel-drop {
     position: fixed;
@@ -696,7 +704,7 @@ button.close:focus {
     min-width: 100vw;
     left: 0;
     top: 0;
-    background: rgba(0, 0, 0, .35)
+    background: rgba(0, 0, 0, .5)
   }
 }
 
@@ -1232,6 +1240,7 @@ button.close:focus {
   }
 }
 
+/*noinspection CssNonIntegerLengthInPixels*/
 @media (max-width: 575.98px) {
   .app-card-stat .stats-figure {
     font-size: 1.125rem
@@ -1356,6 +1365,7 @@ button.close:focus {
   font-size: .75rem
 }
 
+/*noinspection CssNonIntegerLengthInPixels*/
 @media (max-width: 767.98px) {
   .auth-background-col {
     display: none

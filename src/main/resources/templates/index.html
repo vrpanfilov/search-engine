@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
   <title>Portal - Bootstrap 5 Admin Dashboard Template For Developers</title>
 
@@ -8,16 +8,17 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- App CSS -->
-  <!--	<link id="theme-style" rel="stylesheet" href="assets/css/portal.css">-->
+  <!-- Запрет фавикона	>-->
   <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
-<!--  <link rel="shortcut icon" href="favicon.ico">-->
+
   <link rel="stylesheet" href="/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/app.css">
 
 </head>
 
 <body class="app">
+
+<div class="app-header fixed-top mb-4"></div>
 <header class="app-header fixed-top bg-success">
   <div class="app-header-inner ">
     <div class="container-fluid py-2">
@@ -91,12 +92,13 @@
 
     </div><!--//sidepanel-inner-->
   </div><!--//app-sidepanel-->
-</header><!--//app-header-->
+</header><!--//headerapp--->
 
 <div class="app-wrapper">
 
-  <div class="container mt-0 mt-sm-3  pt-3 d-flex" id="dashboard">
-    <div class="container mt-5" style="max-width: 916px;">
+  <div class="container d-flex">
+    <div id="dashboard" class="container" style="max-width: 916px; ">
+      <div class="container" style="height: 3rem"></div>
       <div class="row" id="totalStatistics">
         <div class="col-auto mb-3 ms-4 border border-primary bg-secondary rounded p-3 bg-white">
           <span class="lead fw-bold">Sites: </span>
@@ -219,8 +221,118 @@
     </div>
   </div> <!--dashboard-->
 
-</div><!--//app-wrapper-->
+  <div class="container d-flex">
+    <div id="management" class="container mt-0 mt-sm-5" style=" max-width: 800px; display: none">
+      <div class="row ms-0">
+        <button class="w-auto px-5 p-2 bg-primary text-white fw-bold">Start Indexing</button>
+      </div>
+      <div class="row mt-3 ms-1 fw-bold">
+        Add/update page:
+      </div>
 
+      <div class="row">
+        <div class="input-group">
+          <input type="text" class="form-control input-lg me-3" id="page-url"
+                 placeholder="Page URL">
+          <!--              <span class="input-group-btn">-->
+          <button class="w-auto px-5 p-2 bg-primary text-white fw-bold float-end">Add/Update</button>
+          <!--              </span>-->
+        </div>
+      </div>
+    </div> <!--container-->
+  </div> <!--container management-->
+
+  <div class="container d-flex">
+    <div id="search" class="container " style="max-width: 916px; display: none">
+      <div class="container" style="height: 3rem"></div>
+      <div class="row ms-1 d-flex">
+        <select>
+          <option>All sites</option>
+          <option>https://www.lutherancathedral.ru</option>
+          <option>https://et-cetera.ru</option>
+          <option>https://www.svetlovka.ru</option>
+        </select>
+      </div>
+      <div class="row pt-3">
+        <div class="input-group">
+          <input type="text" class="form-control input-lg me-3" id="sarch-text"
+                 placeholder="Search text">
+          <!--              <span class="input-group-btn">-->
+          <button class="w-auto px-5 p-2 bg-primary text-white fw-bold float-end">Search</button>
+          <!--              </span>-->
+        </div>
+      </div>
+
+      <div class="row d-flex">
+        <span class="fw-bold mt-5 mb-2">Found results: <span class="fw-bold">98</span></span>
+      </div>
+
+      <div class="row ms-1 mb-1 d-flex">
+        <div class="card" id="card-01">
+          <div class="card-header">Театр «Et Cetera» - Утиная охота</div>
+          <div class="card-body"><b>Антон Пахомов</b> Эфир программы "Кто там": <b>Антон Пахомов</b>... пластика
+            актеров, сильный и интересный <b>Антон Пахомов</b> в роли Виктора Зилова ...... <b>Антону Пахомову</b>
+            несомненно эта роль удалась ...... Гениальная игра <b>Антона Пахомова</b> сделала из советского Зилова
+            ...... Зилов- <b>Антон Пахомов</b> - меня обжог своей правдивостью ...... Блестяще исполнил роль Зилова
+            <b>Антон Пахомов</b>, его персонаж – живой портрет ... <b>Антону Пахомову</b>... никакой :( Причем самого
+            <b>Пахомова</b> я видела и в том ... <b>Антон Пахомов Антон Пахомов</b></div>
+        </div>
+      </div>
+      <div class="row ms-1 mb-1 d-flex">
+        <div class="card" id="card-02">
+          <div class="card-header">Театр «Et Cetera» - Антон Пахомов</div>
+          <div class="card-body"> Антон Пахомов Антон Пахомов... Буковски (композиция Антона Пахомова)... Гость: Антон
+            Пахомов Эфир программы "Кто там": Антон Пахомов
+          </div>
+        </div>
+      </div>
+      <div class="row ms-1 mb-1 d-flex">
+        <div class="card" id="card-03">
+          <div class="card-header">Театр «Et Cetera» - Морфий</div>
+          <div class="card-body"> Антон Пахомов... Антон Пахомов - выдающийся артист, благодаря его ...... игра
+            актера, сыгравшего главную роль, Антона Пахомова завораживает, он играет не ...... Актер Антон Пахомов —
+            буквально пластилин, принимающий любые ...... хотя нельзя промолчать про игру Антона Пахомова - я впервые
+            вижу такого ... Антон Пахомов
+          </div>
+        </div>
+      </div>
+      <div class="row ms-1 mb-1 d-flex">
+        <div class="card" id="card-04">
+          <div class="card-header">Театр «Et Cetera» - Драма на охоте</div>
+          <div class="card-body"> Антон Пахомов... Антон Пахомов - выдающийся артист, благодаря его ...... игра
+            актера, сыгравшего главную роль, Антона Пахомова завораживает, он играет не ...... Актер Антон Пахомов —
+            буквально пластилин, принимающий любые ...... хотя нельзя промолчать про игру Антона Пахомова - я впервые
+            вижу такого ... Антон Пахомов
+          </div>
+        </div>
+      </div>
+      <div class="row ms-1 mb-1 d-flex">
+        <div class="card" id="card-05">
+          <div class="card-header">Театр «Et Cetera» - «Орал по радио, что в Сталинграде он…». Российские театры в
+            Одессе пляшут и поют
+          </div>
+          <div class="card-body">Антон Павлович Чехов Антон Яковлев, написавший пьесу по мотивам ... Спектакль Антона
+            Яковлева о людях, существующих на ... Антон Яковлев Антон Яковлев Антон Пахомов Спектакль Антона Яковлева
+            «Драма на охоте» показали ...... Милешкина (Надежда), Андрей Кондаков (Пшехоцкий), Антон Пахомов
+            (доктор),музыканты.... В постановке Антона Яковлева Камышев намного сложнее и ... Антон Яковлев... А мне
+            показалось, в версии Антона Яковлева она и Кадышев — классические ...
+          </div>
+        </div>
+      </div>
+      <div class="row ms-1 mb-1 d-flex">
+        <div class="card" id="card-06">
+          <div class="card-header">Театр «Et Cetera» - Кабы замужем не пропасть</div>
+          <div class="card-body">"Моя жизнь" по повести Антона Павловича Чехова... Гость: Антон Пахомов Эфир программы
+            "Кто там": Антон Пахомов Эфир программы "Кто там": Антон Пахомов Спектакль Антона Яковлева «Драма на
+            охоте» показали ...... «Хрустальная Турандот»в Одессе Полякова играл Антон Пахомов – невероятный
+            темперамент,убедительность, высочайшая ...
+          </div>
+        </div>
+      </div>
+    </div> <!--container-->
+  </div> <!--container search-->
+
+</div><!--//app-wrapper-->
 
 <!-- Javascript -->
 <!--<script src="/static/js/popper.min.js"></script>-->
